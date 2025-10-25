@@ -48,6 +48,7 @@ if (config.env === 'development') {
 // Request timestamp
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.requestTime = new Date().toISOString();
+  console.log(res,'response')
   next();
 });
 
@@ -56,6 +57,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // ==========================================
 
 app.get('/health', (req: Request, res: Response) => {
+  console.log(req.body,'request')
   res.status(200).json({
     success: true,
     status: 'healthy',
@@ -68,6 +70,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
+  console.log(req.body,'request')
   ResponseHandler.success(res, {
     message: 'Family Budget SaaS API',
     version: config.apiVersion,
@@ -97,11 +100,13 @@ app.get('/', (req: Request, res: Response) => {
 
 // 404 handler
 app.use((req: Request, res: Response) => {
+  console.log(req.body,'request')
   ResponseHandler.error(res, 'Route not found', 404);
 });
 
 // Global error handler
-app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error | AppError, req: Request, res: Response,) => {
+  console.log(req.body,'request')
   console.error('❌ Error:', err);
 
   if (err instanceof AppError) {
