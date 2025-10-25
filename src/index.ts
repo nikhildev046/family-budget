@@ -19,6 +19,9 @@ const app: Application = express();
 // MIDDLEWARE
 // ==========================================
 
+// Trust proxy (required for Render)
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet());
 
@@ -69,6 +72,12 @@ app.get('/', (req: Request, res: Response) => {
     message: 'Family Budget SaaS API',
     version: config.apiVersion,
     documentation: `/api/${config.apiVersion}/docs`,
+    endpoints: {
+      health: '/health',
+      auth: `/api/${config.apiVersion}/auth`,
+      budgets: `/api/${config.apiVersion}/budgets`,
+      expenses: `/api/${config.apiVersion}/expenses`,
+    }
   });
 });
 
@@ -96,10 +105,14 @@ app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction)
   console.error('❌ Error:', err);
 
   if (err instanceof AppError) {
-    return ResponseHandler.error(res, err.message, err.statusCode, err);
+    return ResponseHandler.error(res, err.message, err.statusCode, 
+      config.env === 'development' ? err : undefined
+    );
   }
 
-  return ResponseHandler.error(res, 'Internal Server Error', 500, err);
+  return ResponseHandler.error(res, 'Internal Server Error', 500, 
+    config.env === 'development' ? err : undefined
+  );
 });
 
 // ==========================================
@@ -111,20 +124,22 @@ const startServer = async (): Promise<void> => {
     // Connect to MongoDB
     await connectDB();
 
-    // Test AWS connections
-    await testAWSConnection();
+    // Test AWS connections (optional in production)
+    if (config.env === 'development') {
+      await testAWSConnection();
+    }
+
+    // Get port from environment (Render uses PORT env var)
+    const PORT = process.env.PORT || config.port;
 
     // Start Express server
-    if (config.env !== 'production') {
-      app.listen(config.port, () => {
-        console.log('🚀 ========================================');
-        console.log(`🚀 Server running in ${config.env} mode`);
-        console.log(`🚀 Port: ${config.port}`);
-        console.log(`🚀 API: http://localhost:${config.port}/api/${config.apiVersion}`);
-        console.log(`🚀 Health: http://localhost:${config.port}/health`);
-        console.log('🚀 ========================================');
-      });
-    }
+    app.listen(PORT, () => {
+      console.log('🚀 ========================================');
+      console.log(`🚀 Server running in ${config.env} mode`);
+      console.log(`🚀 Port: ${PORT}`);
+      console.log(`🚀 Health: /health`);
+      console.log('🚀 ========================================');
+    });
 
   } catch (err) {
     console.error('❌ Failed to start server:', err);
@@ -148,7 +163,13 @@ process.on('uncaughtException', (err: Error) => {
   process.exit(1);
 });
 
-//
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM received. Shutting down gracefully...');
+  process.exit(0);
+});
+
+// START THE SERVER
 startServer();
 
 export default app;

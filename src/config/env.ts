@@ -36,11 +36,11 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('http://localhost:3001'),
 
   // Rate Limiting
-  RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default(900000),
-  RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default(100),
+  RATE_LIMIT_WINDOW_MS: z.string().default("900000").transform(Number),
+  RATE_LIMIT_MAX_REQUESTS: z.string().default("100").transform(Number),
 
   // File Upload
-  MAX_FILE_SIZE: z.string().transform(Number).default(5242880),
+  MAX_FILE_SIZE: z.string().default('5242880').transform(Number),
   ALLOWED_FILE_TYPES: z.string().default('image/jpeg,image/png,image/jpg,application/pdf'),
 
   // AI

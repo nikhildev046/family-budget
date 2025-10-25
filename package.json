@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "description": "Zero-cost SaaS family budget tracking application with TypeScript",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
-    "build:watch": "tsc --watch",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "postinstall": "npm run build",
     "clean": "rm -rf dist",
-    "test": "jest --coverage --verbose",
+    "test": "jest --coverage",
+    "build:watch": "tsc --watch",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
@@ -68,9 +73,5 @@
     "serverless": "^3.37.0",
     "serverless-plugin-typescript": "^2.1.5",
     "serverless-offline": "^13.3.0"
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
   }
 }
