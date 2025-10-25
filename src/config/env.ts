@@ -10,7 +10,7 @@ dotenv.config();
 const envSchema = z.object({
   // Server
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().transform(Number).default(3000),
+  PORT: z.string().default("3000"),
   API_VERSION: z.string().default('v1'),
 
   // Database
@@ -36,11 +36,11 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('http://localhost:3001'),
 
   // Rate Limiting
-  RATE_LIMIT_WINDOW_MS: z.string().default("900000").transform(Number),
-  RATE_LIMIT_MAX_REQUESTS: z.string().default("100").transform(Number),
+  RATE_LIMIT_WINDOW_MS: z.string().default("900000"),
+  RATE_LIMIT_MAX_REQUESTS: z.string().default("100"),
 
   // File Upload
-  MAX_FILE_SIZE: z.string().default('5242880').transform(Number),
+  MAX_FILE_SIZE: z.string().default('5242880'),
   ALLOWED_FILE_TYPES: z.string().default('image/jpeg,image/png,image/jpg,application/pdf'),
 
   // AI
