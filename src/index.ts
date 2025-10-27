@@ -11,8 +11,8 @@ import { ResponseHandler } from './utils/response';
 
 // ==========================================
 // INITIALIZE EXPRESS APP
-// ==========================================
-
+// ====================================
+console.log(config,'configggg')
 const app: Application = express();
 
 // ==========================================
